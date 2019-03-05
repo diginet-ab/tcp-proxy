@@ -2,7 +2,7 @@
 import argv from "commander"
 import * as fs from "fs"
 import * as packageConfig from "./package.json"
-import { TcpProxy } from "./tcp-proxy"
+import { TcpProxy, TcpProxyOptions } from "./tcp-proxy"
 
 const t = argv
 argv
@@ -22,22 +22,22 @@ argv
         "specify both to also use TLS 1.2 with service", false)
     .option("-u, --rejectUnauthorized [value]",
         "Do not accept invalid certificate", false)
-    .option("-c, --pfx [file]", "Private key file for proxy secure socket (https)",
-        require.resolve("./cert.pfx"))
+    .option("-c, --pfx [file]", "Private key file for proxy secure socket (https)")
     .option("-a, --passphrase [value]",
         "Passphrase to access private key file for secure socket (https)", "abcd")
-    .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)",
-        require.resolve("./cert.pfx"))
+    .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)")
     .option("-z, --passphrase-client [value]",
         "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
         .action(() => {
             const xx = argv
-            const options = {
+            const options: TcpProxyOptions = {
                 hostname: argv.hostname,
                 passphrase: argv.passphrase,
                 pfx: argv.pfx,
                 quiet: argv.q,
-                rejectUnauthorized: argv.rejectUnauthorized !== "false",
+                rejectUnauthorized: argv.rejectUnauthorized && argv.rejectUnauthorized !== "false",
+                serviceClientPassphrase: argv.passphraseClient,
+                serviceClientPfx: argv.pfxClient,
                 tls: argv.tls,
             }
 

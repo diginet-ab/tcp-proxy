@@ -43,6 +43,7 @@ var TcpProxy = /** @class */ (function () {
             };
             _this.createServiceSocket(context);
             proxySocket.on("data", function (data) {
+                _this.log("Received data from proxy. Length " + data.length);
                 if (context.serviceSocket) {
                     if (context.connected) {
                         context.serviceSocket.write(data);
@@ -72,6 +73,7 @@ var TcpProxy = /** @class */ (function () {
                 });
             }
             context.serviceSocket.on("data", function (data) {
+                _this.log("Received data from service. Length " + data.length);
                 context.proxySocket.write(data);
             });
             context.serviceSocket.on("close", function (hadError) {
@@ -92,11 +94,11 @@ var TcpProxy = /** @class */ (function () {
             this.serviceHosts = parseString(serviceHost);
             this.servicePorts = parseNumber(servicePort);
             this.proxyTlsOptions = {
-                passphrase: this.options.proxyPassphrase,
+                passphrase: this.options.passphrase,
                 secureProtocol: "TLSv1_2_method",
             };
-            if (this.options.tls !== false && this.options.proxyPfx) {
-                this.proxyTlsOptions.pfx = fs.readFileSync(this.options.proxyPfx);
+            if (this.options.tls !== false && this.options.pfx) {
+                this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx);
             }
             this.serviceTlsOptions = {
                 cert: this.options.serviceClientCert ? fs.readFileSync(this.options.serviceClientCert) : undefined,
@@ -124,12 +126,10 @@ var TcpProxy = /** @class */ (function () {
     };
     TcpProxy.prototype.writeBuffer = function (context) {
         context.connected = true;
-        if (context.buffers.length > 0) {
-            for (var _i = 0, _a = context.buffers; _i < _a.length; _i++) {
-                var buf = _a[_i];
-                if (context.serviceSocket)
-                    context.serviceSocket.write(buf);
-            }
+        for (var _i = 0, _a = context.buffers; _i < _a.length; _i++) {
+            var buf = _a[_i];
+            if (context.serviceSocket)
+                context.serviceSocket.write(buf);
         }
     };
     TcpProxy.prototype.log = function (msg) {

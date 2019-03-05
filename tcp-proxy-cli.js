@@ -30,9 +30,9 @@ commander_1.default
     .option("-t, --tls [both]", "Use TLS 1.2 with clients; " +
     "specify both to also use TLS 1.2 with service", false)
     .option("-u, --rejectUnauthorized [value]", "Do not accept invalid certificate", false)
-    .option("-c, --pfx [file]", "Private key file for proxy secure socket (https)", require.resolve("./cert.pfx"))
+    .option("-c, --pfx [file]", "Private key file for proxy secure socket (https)")
     .option("-a, --passphrase [value]", "Passphrase to access private key file for secure socket (https)", "abcd")
-    .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)", require.resolve("./cert.pfx"))
+    .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)")
     .option("-z, --passphrase-client [value]", "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
     .action(function () {
     var xx = commander_1.default;
@@ -41,7 +41,9 @@ commander_1.default
         passphrase: commander_1.default.passphrase,
         pfx: commander_1.default.pfx,
         quiet: commander_1.default.q,
-        rejectUnauthorized: commander_1.default.rejectUnauthorized !== "false",
+        rejectUnauthorized: commander_1.default.rejectUnauthorized && commander_1.default.rejectUnauthorized !== "false",
+        serviceClientPassphrase: commander_1.default.passphraseClient,
+        serviceClientPfx: commander_1.default.pfxClient,
         tls: commander_1.default.tls,
     };
     var proxy = new tcp_proxy_1.TcpProxy(commander_1.default.proxyPort, commander_1.default.serviceHost, commander_1.default.servicePort, options);

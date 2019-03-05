@@ -4,9 +4,9 @@ import * as tls from "tls"
 
 export interface TcpProxyOptions {
     quiet?: boolean,
-    proxyPassphrase?: string,
+    passphrase?: string,
     tls?: false | "both" | "tls"
-    proxyPfx?: string,
+    pfx?: string,
     serviceClientPfx?: string,
     serviceClientKey?: string,
     serviceClientCert?: string,
@@ -36,11 +36,11 @@ export class TcpProxy {
             this.serviceHosts = parseString(serviceHost)
             this.servicePorts = parseNumber(servicePort)
             this.proxyTlsOptions = {
-                passphrase: this.options.proxyPassphrase,
+                passphrase: this.options.passphrase,
                 secureProtocol: "TLSv1_2_method",
             }
-            if (this.options.tls !== false && this.options.proxyPfx) {
-                this.proxyTlsOptions.pfx = fs.readFileSync(this.options.proxyPfx)
+            if (this.options.tls !== false && this.options.pfx) {
+                this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx)
             }
 
             this.serviceTlsOptions = {
@@ -91,6 +91,7 @@ export class TcpProxy {
         }
         this.createServiceSocket(context)
         proxySocket.on("data", (data) => {
+            this.log("Received data from proxy. Length " + data.length)
             if (context.serviceSocket) {
                 if (context.connected) {
                     context.serviceSocket.write(data)
@@ -121,6 +122,7 @@ export class TcpProxy {
                 })
         }
         context.serviceSocket.on("data", (data) => {
+            this.log("Received data from service. Length " + data.length)
             context.proxySocket.write(data)
         })
         context.serviceSocket.on("close", (hadError) => {
@@ -141,11 +143,9 @@ export class TcpProxy {
 
     protected writeBuffer(context: ProxyContext) {
         context.connected = true
-        if (context.buffers.length > 0) {
-            for (const buf of context.buffers) {
-                if (context.serviceSocket)
-                    context.serviceSocket.write(buf)
-            }
+        for (const buf of context.buffers) {
+            if (context.serviceSocket)
+                context.serviceSocket.write(buf)
         }
     }
 
