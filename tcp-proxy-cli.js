@@ -33,22 +33,24 @@ commander_1.default
     .option("-a, --passphrase [value]", "Passphrase to access private key file for secure socket (https)", "abcd")
     .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)", require.resolve("./cert.pfx"))
     .option("-z, --passphrase-client [value]", "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
+    .action(function () {
+    var options = {
+        hostname: commander_1.default.hostname,
+        passphrase: commander_1.default.passphrase,
+        pfx: commander_1.default.pfx,
+        quiet: commander_1.default.q,
+        rejectUnauthorized: commander_1.default.rejectUnauthorized !== "false",
+        tls: commander_1.default.tls,
+    };
+    var proxy = new tcp_proxy_1.TcpProxy(commander_1.default.proxyPort, commander_1.default.serviceHost, commander_1.default.servicePort, options);
+    process.on("uncaughtException", function (err) {
+        // tslint:disable-next-line: no-console
+        console.error(err);
+        proxy.end();
+    });
+    process.on("SIGINT", function () {
+        proxy.end();
+    });
+})
     .parse(process.argv);
-var options = {
-    hostname: commander_1.default.hostname,
-    passphrase: commander_1.default.passphrase,
-    pfx: commander_1.default.pfx,
-    quiet: commander_1.default.q,
-    rejectUnauthorized: commander_1.default.rejectUnauthorized !== "false",
-    tls: commander_1.default.tls,
-};
-var proxy = new tcp_proxy_1.TcpProxy(commander_1.default.proxyPort, commander_1.default.serviceHost, commander_1.default.servicePort, options);
-process.on("uncaughtException", function (err) {
-    // tslint:disable-next-line: no-console
-    console.error(err);
-    proxy.end();
-});
-process.on("SIGINT", function () {
-    proxy.end();
-});
 //# sourceMappingURL=tcp-proxy-cli.js.map

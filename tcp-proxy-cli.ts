@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import argv from "commander";
+import argv from "commander"
 import * as fs from "fs"
 import * as packageConfig from "./package.json"
 import { TcpProxy } from "./tcp-proxy"
@@ -29,26 +29,27 @@ argv
         require.resolve("./cert.pfx"))
     .option("-z, --passphrase-client [value]",
         "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
+        .action(() => {
+            const options = {
+                hostname: argv.hostname,
+                passphrase: argv.passphrase,
+                pfx: argv.pfx,
+                quiet: argv.q,
+                rejectUnauthorized: argv.rejectUnauthorized !== "false",
+                tls: argv.tls,
+            }
+
+            const proxy = new TcpProxy(argv.proxyPort,
+                argv.serviceHost, argv.servicePort, options)
+
+            process.on("uncaughtException", (err) => {
+            // tslint:disable-next-line: no-console
+                console.error(err)
+                proxy.end()
+            })
+
+            process.on("SIGINT", () => {
+                proxy.end()
+            })
+                    })
     .parse(process.argv)
-
-const options = {
-    hostname: argv.hostname,
-    passphrase: argv.passphrase,
-    pfx: argv.pfx,
-    quiet: argv.q,
-    rejectUnauthorized: argv.rejectUnauthorized !== "false",
-    tls: argv.tls,
-}
-
-const proxy = new TcpProxy(argv.proxyPort,
-    argv.serviceHost, argv.servicePort, options)
-
-process.on("uncaughtException", (err) => {
-// tslint:disable-next-line: no-console
-    console.error(err)
-    proxy.end()
-})
-
-process.on("SIGINT", () => {
-    proxy.end()
-})
