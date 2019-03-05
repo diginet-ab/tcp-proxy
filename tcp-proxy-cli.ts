@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import * as argv from "commander"
 import * as fs from "fs"
+import * as packageConfig from "./package.json"
 import { TcpProxy } from "./tcp-proxy"
-
-const packageConfig: any = fs.readFileSync("./package.json")
 
 argv
     .usage("[options]")
