@@ -10,7 +10,7 @@
             "sourceMaps": true,
             "name": "Launch Program",
             "program": "${workspaceFolder}/tcp-proxy-cli.js",
-            "args": ["-p" , "6512", "-n", "localhost", "-s", "3443", "--tls", "both", "-c", "c:\\OpenSSL\\server.p12", "-a", "hej", /*"-x", "c:\\OpenSSL\\alice.p12", "-z", "hej"*/]
+            "args": ["-p" , "6512", "-n", "localhost", "-s", "3443", "-k", "c:\\OpenSSL\\server_cert.pem", "--tls", "both", "-c", "c:\\OpenSSL\\server.p12", "-a", "hej", /*"-x", "c:\\OpenSSL\\alice.p12", "-z", "hej"*/]
         }
     ]
 }

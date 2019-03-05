@@ -99,6 +99,8 @@ var TcpProxy = /** @class */ (function () {
             };
             if (this.options.tls !== false && this.options.pfx) {
                 this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx);
+                if (this.options.serviceCaCert)
+                    this.proxyTlsOptions.ca = fs.readFileSync(this.options.serviceCaCert);
             }
             this.serviceTlsOptions = {
                 cert: this.options.serviceClientCert ? fs.readFileSync(this.options.serviceClientCert) : undefined,

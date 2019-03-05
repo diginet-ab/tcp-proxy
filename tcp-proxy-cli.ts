@@ -28,30 +28,34 @@ argv
     .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)")
     .option("-z, --passphrase-client [value]",
         "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
-        .action(() => {
-            const xx = argv
-            const options: TcpProxyOptions = {
-                hostname: argv.hostname,
-                passphrase: argv.passphrase,
-                pfx: argv.pfx,
-                quiet: argv.q,
-                rejectUnauthorized: argv.rejectUnauthorized && argv.rejectUnauthorized !== "false",
-                serviceClientPassphrase: argv.passphraseClient,
-                serviceClientPfx: argv.pfxClient,
-                tls: argv.tls,
-            }
+    .option("-k, --ca-cert [file]", "Private chain key file for secure socket (https)")
+    .option("-j, --passphrase-ca [value]",
+        "Passphrase to access private chain key file for secure socket (https)", "abcd")
+    .action(() => {
+        const xx = argv
+        const options: TcpProxyOptions = {
+            hostname: argv.hostname,
+            passphrase: argv.passphrase,
+            pfx: argv.pfx,
+            quiet: argv.q,
+            rejectUnauthorized: argv.rejectUnauthorized && argv.rejectUnauthorized !== "false",
+            serviceCaCert: argv.caCert,
+            serviceClientPassphrase: argv.passphraseClient,
+            serviceClientPfx: argv.pfxClient,
+            tls: argv.tls,
+        }
 
-            const proxy = new TcpProxy(argv.proxyPort,
-                argv.serviceHost, argv.servicePort, options)
+        const proxy = new TcpProxy(argv.proxyPort,
+            argv.serviceHost, argv.servicePort, options)
 
-            process.on("uncaughtException", (err) => {
+        process.on("uncaughtException", (err) => {
             // tslint:disable-next-line: no-console
-                console.error(err)
-                proxy.end()
-            })
+            console.error(err)
+            proxy.end()
+        })
 
-            process.on("SIGINT", () => {
-                proxy.end()
-            })
-                    })
+        process.on("SIGINT", () => {
+            proxy.end()
+        })
+    })
     .parse(process.argv)

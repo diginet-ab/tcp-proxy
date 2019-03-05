@@ -34,6 +34,8 @@ commander_1.default
     .option("-a, --passphrase [value]", "Passphrase to access private key file for secure socket (https)", "abcd")
     .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)")
     .option("-z, --passphrase-client [value]", "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
+    .option("-k, --ca-cert [file]", "Private chain key file for secure socket (https)")
+    .option("-j, --passphrase-ca [value]", "Passphrase to access private chain key file for secure socket (https)", "abcd")
     .action(function () {
     var xx = commander_1.default;
     var options = {
@@ -42,6 +44,7 @@ commander_1.default
         pfx: commander_1.default.pfx,
         quiet: commander_1.default.q,
         rejectUnauthorized: commander_1.default.rejectUnauthorized && commander_1.default.rejectUnauthorized !== "false",
+        serviceCaCert: commander_1.default.caCert,
         serviceClientPassphrase: commander_1.default.passphraseClient,
         serviceClientPfx: commander_1.default.pfxClient,
         tls: commander_1.default.tls,

@@ -11,6 +11,8 @@ export interface TcpProxyOptions {
     serviceClientKey?: string,
     serviceClientCert?: string,
     serviceClientPassphrase?: string,
+    serviceCaCert?: string,
+    serviceCaPassphrase?: string,
     rejectUnauthorized?: boolean,
     hostname?: string
 }
@@ -41,6 +43,8 @@ export class TcpProxy {
             }
             if (this.options.tls !== false && this.options.pfx) {
                 this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx)
+                if (this.options.serviceCaCert)
+                    this.proxyTlsOptions.ca = fs.readFileSync(this.options.serviceCaCert)
             }
 
             this.serviceTlsOptions = {
