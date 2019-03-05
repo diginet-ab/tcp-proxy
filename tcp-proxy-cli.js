@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -8,11 +11,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var argv = __importStar(require("commander"));
-var fs = __importStar(require("fs"));
+var commander_1 = __importDefault(require("commander"));
+var packageConfig = __importStar(require("./package.json"));
 var tcp_proxy_1 = require("./tcp-proxy");
-var packageConfig = fs.readFileSync("./package.json");
-argv
+commander_1.default
     .usage("[options]")
     .version(packageConfig.version)
     .option("-p, --proxyPort <number>", "Proxy port number", parseInt)
@@ -33,14 +35,14 @@ argv
     .option("-z, --passphrase-client [value]", "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
     .parse(process.argv);
 var options = {
-    hostname: argv.hostname,
-    passphrase: argv.passphrase,
-    pfx: argv.pfx,
-    quiet: argv.q,
-    rejectUnauthorized: argv.rejectUnauthorized !== "false",
-    tls: argv.tls,
+    hostname: commander_1.default.hostname,
+    passphrase: commander_1.default.passphrase,
+    pfx: commander_1.default.pfx,
+    quiet: commander_1.default.q,
+    rejectUnauthorized: commander_1.default.rejectUnauthorized !== "false",
+    tls: commander_1.default.tls,
 };
-var proxy = new tcp_proxy_1.TcpProxy(argv.proxyPort, argv.serviceHost, argv.servicePort, options);
+var proxy = new tcp_proxy_1.TcpProxy(commander_1.default.proxyPort, commander_1.default.serviceHost, commander_1.default.servicePort, options);
 process.on("uncaughtException", function (err) {
     // tslint:disable-next-line: no-console
     console.error(err);

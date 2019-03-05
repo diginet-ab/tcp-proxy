@@ -9,10 +9,7 @@
             "request": "launch",
             "sourceMaps": true,
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\proxy.js",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "program": "${workspaceFolder}/tcp-proxy-cli.js"
         }
     ]
 }
