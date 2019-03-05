@@ -1,6 +1,8 @@
 # node-tcp-proxy
 
-A simple TCP proxy that may be used to access a service on another network.
+A simple TCP proxy that may be used to access a service on another network. Supports client certificates.
+
+Based on [node-tcp-proxy](https://github.com/tewarid/node-tcp-proxy), converted to TypeScript and with added support for client certificates.
 
 To achieve the same with node-tcp-proxy
 
