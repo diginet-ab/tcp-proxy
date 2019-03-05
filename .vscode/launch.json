@@ -9,7 +9,8 @@
             "request": "launch",
             "sourceMaps": true,
             "name": "Launch Program",
-            "program": "${workspaceFolder}/tcp-proxy-cli.js"
+            "program": "${workspaceFolder}/tcp-proxy-cli.js",
+            "args": ["-p", "6512", "-n", "localhost", "-s", "9222", "-q"]
         }
     ]
 }

@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var commander_1 = __importDefault(require("commander"));
 var packageConfig = __importStar(require("./package.json"));
 var tcp_proxy_1 = require("./tcp-proxy");
+var t = commander_1.default;
 commander_1.default
     .usage("[options]")
     .version(packageConfig.version)
@@ -34,6 +35,7 @@ commander_1.default
     .option("-x, --pfx-client [file]", "Private key file for secure socket to service (client certificate)", require.resolve("./cert.pfx"))
     .option("-z, --passphrase-client [value]", "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
     .action(function () {
+    var xx = commander_1.default;
     var options = {
         hostname: commander_1.default.hostname,
         passphrase: commander_1.default.passphrase,

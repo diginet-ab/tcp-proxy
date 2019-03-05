@@ -16,6 +16,8 @@ var TcpProxy = /** @class */ (function () {
         var _this = this;
         this.proxyPort = proxyPort;
         this.options = options;
+        this.serviceHosts = [];
+        this.servicePorts = [];
         this.serviceHostIndex = -1;
         this.proxySockets = {};
         this.createListener = function () {
@@ -29,7 +31,7 @@ var TcpProxy = /** @class */ (function () {
                     _this.handleClient(socket);
                 });
             }
-            _this.server.listen(_this.proxyPort, _this.options.hostname);
+            _this.server.listen(_this.proxyPort, _this.options.hostname, function () { return _this.log("Listening on " + (_this.options.hostname ? _this.options.hostname : "0.0.0.0") + ":" + _this.proxyPort + " while proxying " + _this.serviceHosts.toString() + ":" + _this.servicePorts.toString()); });
         };
         this.handleClient = function (proxySocket) {
             var key = uniqueKey(proxySocket);
@@ -41,7 +43,6 @@ var TcpProxy = /** @class */ (function () {
             };
             _this.createServiceSocket(context);
             proxySocket.on("data", function (data) {
-                _this.log("Data from client. Length: " + data.byteLength);
                 if (context.serviceSocket) {
                     if (context.connected) {
                         context.serviceSocket.write(data);
@@ -72,7 +73,6 @@ var TcpProxy = /** @class */ (function () {
             }
             context.serviceSocket.on("data", function (data) {
                 context.proxySocket.write(data);
-                _this.log("Data from host. Length: " + data.byteLength);
             });
             context.serviceSocket.on("close", function (hadError) {
                 context.proxySocket.destroy();
@@ -88,24 +88,29 @@ var TcpProxy = /** @class */ (function () {
             }
             return _this.serviceHostIndex;
         };
-        this.serviceHosts = parseString(serviceHost);
-        this.servicePorts = parseNumber(servicePort);
-        this.proxyTlsOptions = {
-            passphrase: this.options.proxyPassphrase,
-            secureProtocol: "TLSv1_2_method",
-        };
-        if (this.options.tls !== false && this.options.proxyPfx) {
-            this.proxyTlsOptions.pfx = fs.readFileSync(this.options.proxyPfx);
+        if (proxyPort && serviceHost && servicePort) {
+            this.serviceHosts = parseString(serviceHost);
+            this.servicePorts = parseNumber(servicePort);
+            this.proxyTlsOptions = {
+                passphrase: this.options.proxyPassphrase,
+                secureProtocol: "TLSv1_2_method",
+            };
+            if (this.options.tls !== false && this.options.proxyPfx) {
+                this.proxyTlsOptions.pfx = fs.readFileSync(this.options.proxyPfx);
+            }
+            this.serviceTlsOptions = {
+                cert: this.options.serviceClientCert ? fs.readFileSync(this.options.serviceClientCert) : undefined,
+                key: this.options.serviceClientKey ? fs.readFileSync(this.options.serviceClientKey) : undefined,
+                passphrase: this.options.serviceClientPassphrase,
+                pfx: this.options.serviceClientPfx ? fs.readFileSync(this.options.serviceClientPfx) : undefined,
+                rejectUnauthorized: this.options.rejectUnauthorized,
+                secureProtocol: "TLSv1_2_method",
+            };
+            this.createListener();
         }
-        this.serviceTlsOptions = {
-            cert: this.options.serviceClientCert ? fs.readFileSync(this.options.serviceClientCert) : undefined,
-            key: this.options.serviceClientKey ? fs.readFileSync(this.options.serviceClientKey) : undefined,
-            passphrase: this.options.serviceClientPassphrase,
-            pfx: this.options.serviceClientPfx ? fs.readFileSync(this.options.serviceClientPfx) : undefined,
-            rejectUnauthorized: this.options.rejectUnauthorized,
-            secureProtocol: "TLSv1_2_method",
-        };
-        this.createListener();
+        else
+            // tslint:disable-next-line: no-console
+            console.log("Missing arguments");
     }
     TcpProxy.prototype.end = function () {
         if (this.server)
@@ -152,7 +157,10 @@ function parseString(o) {
     }
 }
 function parseNumber(o) {
-    if (typeof o === "number") {
+    if (typeof o === "string") {
+        return o.split(",").map(function (value) { return parseInt(value, 10); });
+    }
+    else if (typeof o === "number") {
         return [o];
     }
     else if (Array.isArray(o)) {

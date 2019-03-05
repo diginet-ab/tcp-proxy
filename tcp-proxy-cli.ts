@@ -4,6 +4,7 @@ import * as fs from "fs"
 import * as packageConfig from "./package.json"
 import { TcpProxy } from "./tcp-proxy"
 
+const t = argv
 argv
     .usage("[options]")
     .version(packageConfig.version)
@@ -30,6 +31,7 @@ argv
     .option("-z, --passphrase-client [value]",
         "Passphrase to access private key file for secure socket to service (client certificate)", "abcd")
         .action(() => {
+            const xx = argv
             const options = {
                 hostname: argv.hostname,
                 passphrase: argv.passphrase,
