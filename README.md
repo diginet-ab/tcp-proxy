@@ -4,10 +4,10 @@ A simple TCP proxy that may be used to access a service on another network. Supp
 
 Based on [node-tcp-proxy](https://github.com/tewarid/node-tcp-proxy), converted to TypeScript and with added support for client certificates.
 
-To achieve the same with node-tcp-proxy
+To connect a local port to a remote (or local) service:
 
 ```bash
-tcpproxy  --proxyPort port [--hostname <name or IP>] --serviceHost host1,host2 --servicePort port1,port2 [--q] [--tls [both]] [--pfx file] [--passphrase secret]
+tcpproxy  --proxyPort port [--hostname <name or IP>] --serviceHost host1,host2 --servicePort port1,port2 [--q] [--tls [both]] [--pfx file] [--passphrase secret]  [--pfx-client file] [--passphrase-client secret]
 ```
 
 Optionally, `hostname` specifies the IP address to listen at. Node.js listens on unspecified IPv6 address `::` by default. If `serviceHost` and `servicePort` specify a comma separated list, the proxy will perform load balancing on a round-robin basis.
