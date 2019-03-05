@@ -1,4 +1,4 @@
-# node-tcp-proxy
+# tcp-proxy
 
 A simple TCP proxy that may be used to access a service on another network. Supports client certificates.
 
