@@ -8,7 +8,7 @@
     "url": "https://github.com/diginet-ab/tcp-proxy"
   },
   "bin": {
-    "tcpproxy": "./tcp-proxy-cli.js"
+    "tcp-proxy": "./tcp-proxy-cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
