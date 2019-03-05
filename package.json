@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/XXXXXX/tcp-proxy.git"
+    "url": "https://github.com/diginet-ab/tcp-proxy"
   },
   "bin": {
     "tcpproxy": "./tcp-proxy-cli.js"

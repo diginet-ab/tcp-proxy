@@ -14,7 +14,7 @@ TLS can be enabled at the proxy port using the `tls` option. If followed by `bot
 
 ## npm
 
-Install node-tcp-proxy from [npm](https://www.npmjs.com/package/node-tcp-proxy), thus
+Install node-tcp-proxy from [npm](https://www.npmjs.com/package/@diginet/tcp-proxy), thus
 ```
 sudo npm install -g @diginet/tcp-proxy
 ```
