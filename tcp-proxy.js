@@ -152,7 +152,10 @@ function parseString(o) {
     }
 }
 function parseNumber(o) {
-    if (Array.isArray(o)) {
+    if (typeof o === "number") {
+        return [o];
+    }
+    else if (Array.isArray(o)) {
         return o;
     }
     else {

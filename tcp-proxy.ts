@@ -171,7 +171,9 @@ function parseString(o: string | string[]) {
 }
 
 function parseNumber(o: number | number[]) {
-    if (Array.isArray(o)) {
+    if (typeof o === "number") {
+        return [o]
+    } else if (Array.isArray(o)) {
         return o
     } else {
         throw new Error("cannot parse object: " + o)
