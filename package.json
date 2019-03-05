@@ -1,0 +1,23 @@
+{
+  "name": "@diginet/tcp-proxy",
+  "version": "1.0.0",
+  "description": "A simple TCP proxy built using Node.js",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XXXXXX/tcp-proxy.git"
+  },
+  "bin": {
+    "tcpproxy": "./tcp-proxy-cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^11.10.4",
+    "commander": "^2.19.0"
+  }
+}
