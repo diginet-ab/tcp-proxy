@@ -5,6 +5,7 @@
         "curly":false,
         "interface-name": false,
         "arrow-parens": false,
-        "max-line-length": false
+        "max-line-length": false,
+        "max-classes-per-file": false
     }
 }

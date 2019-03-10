@@ -3,40 +3,60 @@ import * as net from "net"
 import * as tls from "tls"
 
 export interface TcpProxyOptions {
-    quiet?: boolean,
-    passphrase?: string,
-    tls?: false | "both" | "tls"
-    pfx?: string,
-    serviceClientPfx?: string,
-    serviceClientKey?: string,
-    serviceClientCert?: string,
-    serviceClientPassphrase?: string,
-    serviceCaCert?: string,
-    serviceCaPassphrase?: string,
-    rejectUnauthorized?: boolean,
-    hostname?: string
+    quiet?: boolean
+}
+
+export class TcpListener {
+    public passphrase?: string
+    public tls?: false | "both" | "tls"
+    public pfx?: string
+    public rejectUnauthorized?: boolean
+    public hostname?: string
+    public tlsOptions?: tls.TlsOptions
+    public sockets: { [key: string]: net.Socket } = {}
+    public server?: net.Server
+    constructor(public proxyPort: number) {
+    }
+}
+
+export class TcpService {
+    public clientPfx?: string
+    public clientKey?: string
+    public clientCert?: string
+    public clientPassphrase?: string
+    public caCert?: string
+    public caPassphrase?: string
+    public hostIndex = -1
+    public tlsOptions?: tls.TlsOptions
+    constructor(public serviceHost: string | string[], public servicePort: number | number[]) {
+    }
+}
+
+export class TcpServiceSelector {
+}
+
+export class TcpServiceSelectorRoundRobin extends TcpServiceSelector {
+    public serviceHostIndex = -1
 }
 
 interface ProxyContext {
-    buffers: Buffer[],
-    connected: boolean,
+    buffers: Buffer[]
+    connected: boolean
     proxySocket: net.Socket
     serviceSocket?: net.Socket
 }
 
 export class TcpProxy {
-    public serviceHosts: string[] = []
-    public servicePorts: number[] = []
-    public serviceHostIndex = -1
-    public proxyTlsOptions?: tls.TlsOptions
-    public serviceTlsOptions?: tls.TlsOptions
-    public proxySockets: { [key: string]: net.Socket } = {}
-    public server?: net.Server
-
-    constructor(public proxyPort: number, serviceHost: string | string[], servicePort: number | number[], public options: TcpProxyOptions = { quiet: false }) {
+    constructor(public proxyPort: number, serviceHost: string | string[], servicePort: number | number[], public listenerOptions: TcpListenerOptions, public serviceOptions: TcpServiceOptions, public proxyOptions: TcpProxyOptions = { quiet: false }) {
         if (proxyPort && serviceHost && servicePort) {
-            this.serviceHosts = parseString(serviceHost)
-            this.servicePorts = parseNumber(servicePort)
+            if (Array.isArray(serviceHost))
+                this.serviceHosts = serviceHost
+            else
+                this.serviceHosts = [serviceHost]
+            if (Array.isArray(servicePort))
+                this.servicePorts = servicePort
+            else
+                this.servicePorts = [servicePort]
             this.proxyTlsOptions = {
                 passphrase: this.options.passphrase,
                 secureProtocol: "TLSv1_2_method",
@@ -57,7 +77,7 @@ export class TcpProxy {
             }
             this.createListener()
         } else
-// tslint:disable-next-line: no-console
+            // tslint:disable-next-line: no-console
             console.log("Missing arguments")
     }
 
@@ -86,7 +106,7 @@ export class TcpProxy {
     }
 
     protected handleClient = (proxySocket: net.Socket) => {
-        const key = uniqueKey(proxySocket)
+        const key = this.uniqueKey(proxySocket)
         this.proxySockets[key] = proxySocket
         const context: ProxyContext = {
             buffers: [],
@@ -105,7 +125,7 @@ export class TcpProxy {
             }
         })
         proxySocket.on("close", (hadError) => {
-            delete this.proxySockets[uniqueKey(proxySocket)]
+            delete this.proxySockets[this.uniqueKey(proxySocket)]
             if (context.serviceSocket)
                 context.serviceSocket.destroy()
         })
@@ -159,31 +179,9 @@ export class TcpProxy {
             console.log(msg)
         }
     }
-}
 
-function uniqueKey(socket: net.Socket) {
-    const key = socket.remoteAddress + ":" + socket.remotePort
-    return key
-}
-
-function parseString(o: string | string[]) {
-    if (typeof o === "string") {
-        return o.split(",")
-    } else if (Array.isArray(o)) {
-        return o
-    } else {
-        throw new Error("cannot parse object: " + o)
-    }
-}
-
-function parseNumber(o: string | number | number[]) {
-    if (typeof o === "string") {
-        return o.split(",").map(value => parseInt(value, 10))
-    } else if (typeof o === "number") {
-        return [o]
-    } else if (Array.isArray(o)) {
-        return o
-    } else {
-        throw new Error("cannot parse object: " + o)
+    protected uniqueKey(socket: net.Socket) {
+        const key = socket.remoteAddress + ":" + socket.remotePort
+        return key
     }
 }
