@@ -27,7 +27,7 @@ To create a proxy in your own code
 
 ```typescript
 import { TcpProxy, TcpProxyOptions } from "@diginet/tcp-proxy"
-const newProxy = new TcPproxy(8080, "host", 10080)
+const newProxy = new TcProxy(8080, "host", 10080)
 ```
 
 To end the proxy
