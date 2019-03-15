@@ -21,7 +21,7 @@ var TcpProxy = /** @class */ (function () {
         this.serviceHostIndex = -1;
         this.proxySockets = {};
         this.createListener = function () {
-            if (_this.options.tls !== false) {
+            if (_this.options.tls !== undefined && _this.options.tls !== false) {
                 _this.server = tls.createServer(_this.proxyTlsOptions, function (socket) {
                     _this.handleClient(socket);
                 });
@@ -97,7 +97,7 @@ var TcpProxy = /** @class */ (function () {
                 passphrase: this.options.passphrase,
                 secureProtocol: "TLSv1_2_method",
             };
-            if (this.options.tls !== false && this.options.pfx) {
+            if (this.options.tls !== undefined && this.options.tls !== false && this.options.pfx) {
                 this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx);
                 if (this.options.serviceCaCert)
                     this.proxyTlsOptions.ca = fs.readFileSync(this.options.serviceCaCert);

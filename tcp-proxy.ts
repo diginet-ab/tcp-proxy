@@ -41,7 +41,7 @@ export class TcpProxy {
                 passphrase: this.options.passphrase,
                 secureProtocol: "TLSv1_2_method",
             }
-            if (this.options.tls !== false && this.options.pfx) {
+            if (this.options.tls !== undefined && this.options.tls !== false && this.options.pfx) {
                 this.proxyTlsOptions.pfx = fs.readFileSync(this.options.pfx)
                 if (this.options.serviceCaCert)
                     this.proxyTlsOptions.ca = fs.readFileSync(this.options.serviceCaCert)
@@ -73,7 +73,7 @@ export class TcpProxy {
     }
 
     protected createListener = () => {
-        if (this.options.tls !== false) {
+        if (this.options.tls !== undefined && this.options.tls !== false) {
             this.server = tls.createServer(this.proxyTlsOptions!, (socket) => {
                 this.handleClient(socket)
             })
