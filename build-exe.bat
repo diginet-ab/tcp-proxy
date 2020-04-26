@@ -1,1 +1,1 @@
-pkg -o tcp-proxy.exe -t node8-win tcp-proxy-cli.js
+pkg -o tcp-proxy.exe -t node13-win tcp-proxy-cli.js

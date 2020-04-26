@@ -29,7 +29,7 @@ export class TcpProxy {
     public servicePorts: number[] = []
     public serviceHostIndex = -1
     public proxyTlsOptions?: tls.TlsOptions
-    public serviceTlsOptions?: tls.TlsOptions
+    public serviceTlsOptions?: tls.ConnectionOptions
     public proxySockets: { [key: string]: net.Socket } = {}
     public server?: net.Server
 
@@ -125,16 +125,18 @@ export class TcpProxy {
                     this.writeBuffer(context)
                 })
         }
-        context.serviceSocket.on("data", (data) => {
-            this.log("Received data from service. Length " + data.length)
-            context.proxySocket.write(data)
-        })
-        context.serviceSocket.on("close", (hadError) => {
-            context.proxySocket.destroy()
-        })
-        context.serviceSocket.on("error", (e) => {
-            context.proxySocket.destroy()
-        })
+        if (context.serviceSocket) {
+            context.serviceSocket.on("data", (data) => {
+                this.log("Received data from service. Length " + data.length)
+                context.proxySocket.write(data)
+            })
+            context.serviceSocket.on("close", (hadError) => {
+                context.proxySocket.destroy()
+            })
+            context.serviceSocket.on("error", (e) => {
+                context.proxySocket.destroy()
+            })
+        }
     }
 
     protected getServiceHostIndex = () => {
@@ -152,11 +154,12 @@ export class TcpProxy {
                 context.serviceSocket.write(buf)
         }
     }
-
+    protected counter = 0
     protected log(msg: string) {
+        this.counter++;
         if (!this.options.quiet) {
             // tslint:disable-next-line: no-console
-            console.log(msg)
+            console.log(this.counter.toString() + " " + msg)
         }
     }
 }

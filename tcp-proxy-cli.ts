@@ -45,13 +45,13 @@ argv
             tls: argv.tls,
         }
 
-        const proxy = new TcpProxy(argv.proxyPort,
-            argv.serviceHost, argv.servicePort, options)
+        let proxy = new TcpProxy(argv.proxyPort, argv.serviceHost, argv.servicePort, options)
 
         process.on("uncaughtException", (err) => {
             // tslint:disable-next-line: no-console
             console.error(err)
             proxy.end()
+            proxy = new TcpProxy(argv.proxyPort, argv.serviceHost, argv.servicePort, options)
         })
 
         process.on("SIGINT", () => {

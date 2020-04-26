@@ -54,6 +54,7 @@ commander_1.default
         // tslint:disable-next-line: no-console
         console.error(err);
         proxy.end();
+        proxy = new tcp_proxy_1.TcpProxy(commander_1.default.proxyPort, commander_1.default.serviceHost, commander_1.default.servicePort, options);
     });
     process.on("SIGINT", function () {
         proxy.end();

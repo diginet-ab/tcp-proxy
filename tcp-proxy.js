@@ -12,8 +12,8 @@ var net = __importStar(require("net"));
 var tls = __importStar(require("tls"));
 var TcpProxy = /** @class */ (function () {
     function TcpProxy(proxyPort, serviceHost, servicePort, options) {
-        if (options === void 0) { options = { quiet: false }; }
         var _this = this;
+        if (options === void 0) { options = { quiet: false }; }
         this.proxyPort = proxyPort;
         this.options = options;
         this.serviceHosts = [];
@@ -72,16 +72,18 @@ var TcpProxy = /** @class */ (function () {
                     _this.writeBuffer(context);
                 });
             }
-            context.serviceSocket.on("data", function (data) {
-                _this.log("Received data from service. Length " + data.length);
-                context.proxySocket.write(data);
-            });
-            context.serviceSocket.on("close", function (hadError) {
-                context.proxySocket.destroy();
-            });
-            context.serviceSocket.on("error", function (e) {
-                context.proxySocket.destroy();
-            });
+            if (context.serviceSocket) {
+                context.serviceSocket.on("data", function (data) {
+                    _this.log("Received data from service. Length " + data.length);
+                    context.proxySocket.write(data);
+                });
+                context.serviceSocket.on("close", function (hadError) {
+                    context.proxySocket.destroy();
+                });
+                context.serviceSocket.on("error", function (e) {
+                    context.proxySocket.destroy();
+                });
+            }
         };
         this.getServiceHostIndex = function () {
             _this.serviceHostIndex++;
@@ -90,6 +92,7 @@ var TcpProxy = /** @class */ (function () {
             }
             return _this.serviceHostIndex;
         };
+        this.counter = 0;
         if (proxyPort && serviceHost && servicePort) {
             this.serviceHosts = parseString(serviceHost);
             this.servicePorts = parseNumber(servicePort);
@@ -135,9 +138,10 @@ var TcpProxy = /** @class */ (function () {
         }
     };
     TcpProxy.prototype.log = function (msg) {
+        this.counter++;
         if (!this.options.quiet) {
             // tslint:disable-next-line: no-console
-            console.log(msg);
+            console.log(this.counter.toString() + " " + msg);
         }
     };
     return TcpProxy;
